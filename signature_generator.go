@@ -1,73 +1,75 @@
-package siggen
+package modulbank_go
 
 import (
-	"context"
 	"crypto/sha1"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"github.com/DarthRamone/modulbank-go/models"
 	"sort"
 	"strings"
 )
 
-func GetSignature(ctx context.Context, secretKey string, request models.BillRequest) (string, error) {
-	kv := make(map[string]interface{})
+//Calculates signature for bill creation request
+func getSignature(secretKey string, request BillRequest) (string, error) {
+	request.Merchant = "25787de5-4f38-4e4a-939d-0de20a6e0698"
 
+	//Future request payload
 	requestBytes, err := json.Marshal(request)
 	if err != nil {
 		return "", fmt.Errorf("failed to marshal request: %w", err)
 	}
 
+	//Key value object represents future JSON structure
+	kv := make(map[string]interface{})
 	err = json.Unmarshal(requestBytes, &kv)
 	if err != nil {
 		return "", fmt.Errorf("failed to unmarshal request bytes to map: %w", err)
 	}
 
+	//Sorting all JSON fields by key
 	keys := make([]string, 0)
 	for k, _ := range kv {
 		keys = append(keys, k)
 	}
 	sort.Strings(keys)
 
+	//Retrieving all key-value pairs with base64 encoded value
 	pairs := make([]string, 0)
 	for _, key := range keys {
-		var valueBytes []byte
-		var err error
-
-		if key == "receipt_items" {
-			valueBytes, err = json.Marshal(request.ReceiptItems)
-			fmt.Printf("receipt bytes: %s\n\n", valueBytes)
-			//valueBytes = []byte("[{\"discount_sum\": 40, \"name\": \"Товар 1\", \"payment_method\": \"full_prepayment\", \"payment_object\": \"commodity\", \"price\": 48, \"quantity\": 10, \"sno\": \"osn\", \"vat\": \"vat10\"}, {\"name\": \"Товар 2\", \"payment_method\": \"full_prepayment\", \"payment_object\": \"commodity\", \"price\": 533, \"quantity\": 1, \"sno\": \"osn\", \"vat\": \"vat10\"}]")
-		} else {
-			valueBytes, err = json.Marshal(kv[key])
-		}
+		valueBytes, err := json.Marshal(kv[key])
 		if err != nil {
 			return "", fmt.Errorf("failed to marshal map value: %w", err)
 		}
 
 		valueStr := string(valueBytes)
+
+		//As long as receipt_items object is passed as string(not as object) - all quotes is escaped in marshaller
+		//For signature generating we should unescape them
+		valueStr = strings.Replace(valueStr, "\\\"", "\"", -1)
+		//Also we should trim all leading and trailing quotes
 		valueStr = strings.Trim(valueStr, "\"")
 
+		//Skip all empty and unnecessary fields
 		if valueStr == "" || key == "signature" {
 			continue
 		}
 
+		//Back to bytes
 		valueBytes = []byte(valueStr)
 
+		//Encoding value to base64
 		value := make([]byte, base64.StdEncoding.EncodedLen(len(valueBytes)))
 		base64.StdEncoding.Encode(value, valueBytes)
 
+		//Building encoded key-value pair
 		pair := fmt.Sprintf("%s=%s", key, string(value))
 		pairs = append(pairs, pair)
 	}
 
+	//Combine all pairs all together
 	combinedPairs := strings.Join(pairs, "&")
-	combinedPairs = strings.Replace(combinedPairs, "\"", "", -1)
 
-	fmt.Printf("%s\n\n", combinedPairs)
-
-	//SHA1(secret_key + SHA1(secret_key + values)
+	//Calculating signature following formula: SHA1(secret_key + SHA1(secret_key + values)
 	str1 := secretKey + combinedPairs
 	hash1 := sha1.Sum([]byte(str1))
 	str2 := secretKey + fmt.Sprintf("%x", hash1[:])

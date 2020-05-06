@@ -1,33 +1,33 @@
-package models
+package modulbank_go
 
 //Предмет расчета.
 type PaymentObject string
 
 const (
 	//Товар
-	COMMODITY = "commodity"
+	PaymentObjectCommodity = "commodity"
 	//Подакцизный товар
-	EXCISE = "excise"
+	PaymentObjectExcise = "excise"
 	//Работа
-	JOB = "job"
+	PaymentObjectJob = "job"
 	//Услуга
-	SERVICE = "service"
+	PaymentObjectService = "service"
 	//Ставка азартной игры
-	GAMBLING_BET = "gambling_bet"
+	PaymentObjectGamblingBet = "gambling_bet"
 	//Выигрыш азартной игры
-	GAMBLING_PRIZE = "gambling_prize"
+	PaymentObjectGamblingPrize = "gambling_prize"
 	//Лотерейный билет
-	LOTTERY = "lottery"
+	PaymentObjectLottery = "lottery"
 	//Выигрыш лотереи
-	LOTTERY_PRIZE = "lottery_prize"
+	PaymentObjectLotteryPrize = "lottery_prize"
 	//Предоставление результатов интеллектуальной деятельности
-	INTELLECTUAL_ACTIVITY = "intellectual_activity"
+	PaymentObjectIntellectualActivity = "intellectual_activity"
 	//Платеж
-	PAYMENT = "payment"
+	PaymentObjectPayment = "payment"
 	//Агентское вознаграждение
-	AGENT_COMISSION = "agent_commission"
+	PaymentObjectAgentComission = "agent_commission"
 	//Составной предмет расчета
-	COMPOSITE = "composite"
+	PaymentObjectComposite = "composite"
 	//Другое
-	ANOTHER = "another"
+	PaymentObjectAnother = "another"
 )

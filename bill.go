@@ -1,4 +1,4 @@
-package models
+package modulbank_go
 
 type (
 	BillRequest struct {
@@ -15,12 +15,6 @@ type (
 		Amount Money `json:"amount"`
 
 		/*
-			Уникальный идентификатор заказа в интернет-магазине.
-			Обязательный параметр.
-			Строка (максимум 50 символов).*/
-		OrderId string `json:"order_id"`
-
-		/*
 			Идентификатор заказа, который будет отображаться покупателю.
 			Необязательный параметр
 			Строка (максимум 50 символов)*/
@@ -30,7 +24,7 @@ type (
 			Описание платежа.
 			Обязательный параметр.
 			Строка (максимум 250 символов).*/
-		Description string `json:"description"`
+		Description string `json:"description,omitempty"`
 
 		/*
 			Флаг отправки письма с уведомлением о выставленном счете.
@@ -42,46 +36,33 @@ type (
 			Флаг тестового режима, в котором можно совершать произвольное количество транзакций с использованием тестовых карт.
 			Необязательный параметр.
 			По умолчанию реальные платежи.*/
-		Testing IntBool `json:"testing"`
+		Testing IntBool `json:"testing,omitempty"`
 
 		/*
 			Срок актуальности счета в секундах. По истечению счет будет недоступен к оплате.
 			Необязательный параметр.
 			Целое число
 			По умолчанию срок актуальности равен одной неделе*/
-		Lifetime uint64 `json:"lifetime,omitempty"`
-
-		/*
-			E-mail клиента.
-			Необязательный параметр.
-			Строка (максимум 64 символа)*/
-		ClientEmail string `json:"client_email"`
-
-		/*
-			Телефон клиента.*/
-		ClientPhone string `json:"client_phone"`
+		Lifetime uint64 `json:"lifetime,omitempty,omitempty"`
 
 		/*
 			Е-mail получателя чека.
 			Необязательный параметр
 			Если в ЛК включена удаленная регистрация чеков через онлайн-кассу, на этот адрес отправится чек.
 			Строка (максимум 64 символа).*/
-		ReceiptContact string `json:"receipt_contact"`
-
-		//TODO:
-		SuccessUrl string `json:"success_url"`
+		ReceiptContact string `json:"receipt_contact,omitempty"`
 
 		/*
 			Позиции чека.
 			Обязательный параметр, если в ЛК включена удаленная регистрация чеков через онлайн-кассу.*/
-		ReceiptItems []ReceiptItem `json:"receipt_items"`
+		ReceiptItems ReceiptItems `json:"receipt_items"`
 
 		/*
 			Текущее время.
 			Обязательный параметр.
 			Дата и время.
 			Формат: UNIX Time.*/
-		UnixTimestamp int64 `json:"unix_timestamp"`
+		UnixTimestamp int64 `json:"unix_timestamp,omitempty"`
 
 		/*
 			Случайная величина.
@@ -89,15 +70,24 @@ type (
 			Строка (максимум 32 символа)
 			Допускаются только печатные
 			ASCII­ символы.*/
-		Salt string `json:"salt"`
+		Salt string `json:"salt,omitempty"`
 
 		/*
 			Криптографическая подпись.
 			Обязательный параметр.
 			Строка (40 символов в нижнем регистре).*/
-		Signature string `json:"signature"`
+		Signature string `json:"signature,omitempty"`
 	}
 
-	BillResponse struct {
+	Bill struct {
+		Id       string  `json:"id"`
+		IsActive bool    `json:"is_active"`
+		Paid     IntBool `json:"paid"`
+		Url      string  `json:"url"`
+	}
+
+	billResponse struct {
+		Bill   Bill   `json:"bill"`
+		Status string `json:"status"`
 	}
 )

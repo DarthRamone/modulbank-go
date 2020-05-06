@@ -1,10 +1,10 @@
-package models
+package modulbank_go
 
 type VAT string
 
 const (
 	//Без НДС
-	NONE = "none"
+	VATNone = "none"
 	//НДС по ставке 0%
 	VAT0 = "vat0"
 	//НДС чека по ставке 10%

@@ -1,21 +1,21 @@
-package models
+package modulbank_go
 
 type (
 	ReceiptItem struct {
 		/*
 			Наименование товара.
 			Максимум 128 символов. */
-		Name string `json:"name"`
+		Name string `json:"name,omitempty"`
 
 		/*
 			Количество.
 			Максимум 5 символов до запятой и 3 символа после запятой.*/
-		Quantity uint32 `json:"quantity"`
+		Quantity uint32 `json:"quantity,omitempty"`
 
 		/*
 			Цена за единицу товара (рубли, в формате 10.99).
 			Максимум 8 символов до запятой и 2 символа после запятой. */
-		Price Money `json:"price"`
+		Price Money `json:"price,omitempty"`
 
 		/*
 			Скидка на позицию (рубли, в формате 5.99).
@@ -23,22 +23,20 @@ type (
 			Используется только в работе через Модулькассу! */
 		DiscountSum Money `json:"discount_sum,omitempty"`
 
-		//[{\"name\":\"Test\",\"quantity\":1,\"price\":100.00,\"sno\":\"usn_income\",\"payment_object\":\"service\",\"payment_method\":\"full_prepayment\",\"vat\":\"vat10\"}]
-		//[{"name":"Test","quantity":1,"price":100.00,"sno":"usn_income","payment_object":"service","payment_method":"full_prepayment","vat":"vat10"}]
 		/*
 			Система налогообложения. */
-		SNO SNO `json:"sno"`
+		SNO SNO `json:"sno,omitempty"`
 
 		/*
 			Предмет расчета */
-		PaymentObject PaymentObject `json:"payment_object"`
+		PaymentObject PaymentObject `json:"payment_object,omitempty"`
 
 		/*
 			Метод платежа */
-		PaymentMethod PaymentMethod `json:"payment_method"`
+		PaymentMethod PaymentMethod `json:"payment_method,omitempty"`
 
 		/*
 			Ставка НДС */
-		VAT VAT `json:"vat"`
+		VAT VAT `json:"vat,omitempty"`
 	}
 )
