@@ -16,23 +16,23 @@ type (
 
 	client struct {
 		http *http.Client
-		opts ClientOptions
+		opts MerchantOptions
 	}
 
-	ClientOptions struct {
+	MerchantOptions struct {
 		Merchant  string
 		SecretKey string
 	}
 )
 
-func NewClient(opts ClientOptions) API {
+func NewClient(opts MerchantOptions) API {
 	return client{http: http.DefaultClient, opts: opts}
 }
 
-func (c client) CreateBill(ctx context.Context, request BillRequest) (bill Bill, err error) {
-	request.Merchant = c.opts.Merchant
+func CreateBill(ctx context.Context, request BillRequest, opts MerchantOptions, c *http.Client) (bill Bill, err error) {
+	request.Merchant = opts.Merchant
 
-	sign, err := getSignature(c.opts.SecretKey, request)
+	sign, err := getSignature(opts.SecretKey, request)
 	if err != nil {
 		return bill, fmt.Errorf("failed to generate signature: %w", err)
 	}
@@ -50,7 +50,7 @@ func (c client) CreateBill(ctx context.Context, request BillRequest) (bill Bill,
 	}
 	req.Header.Set("Content-Type", "application/json")
 
-	resp, err := c.http.Do(req)
+	resp, err := c.Do(req)
 	if err != nil {
 		return bill, fmt.Errorf("failed to do http request: %w", err)
 	}
@@ -79,4 +79,8 @@ func (c client) CreateBill(ctx context.Context, request BillRequest) (bill Bill,
 	}
 
 	return billResponse.Bill, nil
+}
+
+func (c client) CreateBill(ctx context.Context, request BillRequest) (bill Bill, err error) {
+	return CreateBill(ctx, request, c.opts, c.http)
 }
