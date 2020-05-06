@@ -15,17 +15,24 @@ type (
 	}
 
 	client struct {
-		http      *http.Client
-		secretKey string
+		http *http.Client
+		opts ClientOptions
+	}
+
+	ClientOptions struct {
+		Merchant  string
+		SecretKey string
 	}
 )
 
-func NewClient(secretKey string) API {
-	return client{http: http.DefaultClient, secretKey: secretKey}
+func NewClient(opts ClientOptions) API {
+	return client{http: http.DefaultClient, opts: opts}
 }
 
 func (c client) CreateBill(ctx context.Context, request BillRequest) (bill Bill, err error) {
-	sign, err := getSignature(c.secretKey, request)
+	request.Merchant = c.opts.Merchant
+
+	sign, err := getSignature(c.opts.SecretKey, request)
 	if err != nil {
 		return bill, fmt.Errorf("failed to generate signature: %w", err)
 	}
