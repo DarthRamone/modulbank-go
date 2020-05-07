@@ -1,7 +1,15 @@
 package modulbank_go
 
 type (
-	BillRequest struct {
+	GetBillRequest struct {
+		Id            string `json:"id"`
+		Merchant      string `json:"merchant"`
+		UnixTimestamp int64  `json:"unix_timestamp,omitempty"`
+		Salt          string `json:"salt,omitempty"`
+		Signature     string `json:"signature,omitempty"`
+	}
+
+	CreateBillRequest struct {
 		/*
 			Идентификатор магазина, который выдается в личном кабинете на этапе интеграции
 			Обязательный параметр.
@@ -80,10 +88,11 @@ type (
 	}
 
 	Bill struct {
-		Id       string  `json:"id"`
-		IsActive bool    `json:"is_active"`
-		Paid     IntBool `json:"paid"`
-		Url      string  `json:"url"`
+		Id       string `json:"id"`
+		IsActive bool   `json:"is_active"`
+		Paid     int    `json:"paid"`
+		Expired  int    `json:"expired"`
+		Url      string `json:"url"`
 	}
 
 	billResponse struct {

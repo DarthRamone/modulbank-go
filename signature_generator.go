@@ -10,9 +10,7 @@ import (
 )
 
 //Calculates signature for bill creation request
-func getSignature(secretKey string, request BillRequest) (string, error) {
-	request.Merchant = "25787de5-4f38-4e4a-939d-0de20a6e0698"
-
+func getSignature(secretKey string, request interface{}) (string, error) {
 	//Future request payload
 	requestBytes, err := json.Marshal(request)
 	if err != nil {
