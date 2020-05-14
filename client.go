@@ -52,8 +52,6 @@ func GetBill(ctx context.Context, billId string, opts MerchantOptions, c *http.C
 		"https://pay.modulbank.ru/api/v1/bill?id=%s&merchant=%s&unix_timestamp=%d&signature=%s&salt=%s",
 		request.Id, request.Merchant, request.UnixTimestamp, request.Signature, request.Salt)
 
-	fmt.Printf("requestStr: %s\n", requestStr)
-
 	req, err := http.NewRequest("GET", requestStr, nil)
 	if err != nil {
 		panic(err)
@@ -75,8 +73,6 @@ func GetBill(ctx context.Context, billId string, opts MerchantOptions, c *http.C
 	if err != nil {
 		return bill, fmt.Errorf("failed to read body: %w", err)
 	}
-
-	fmt.Println(string(body))
 
 	var billResponse billResponse
 	err = json.Unmarshal(body, &billResponse)
