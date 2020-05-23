@@ -1,4 +1,4 @@
-module github.com/DarthRamone/modulbank-go
+module github.com/firefly-crm/modulbank-go
 
 go 1.13
 
